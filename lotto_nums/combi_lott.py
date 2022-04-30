@@ -9,9 +9,9 @@ import sys
 
 
 ## <1> find Last order of Lotto645 
-LOTTO_NUMS_FILE = "Lotto645_won_1006.xlsx"
+LOTTO_NUMS_FILE = "Lotto645_won_1012.xlsx"
 latest = 5  # 최근 * 당첨번호만 수집 
-GAMES = 2000  # 게임 수
+GAMES = 20000  # 게임 수
 
 # 최종 회차의 숫자부 알아내기 
 fn_f = "Lotto645_won_"
@@ -129,6 +129,7 @@ print('선택되지 않은 번호:', non_nums_sel)
 ## <13> 이전 회수에서 선택된 번호와 뽑히지 않은 번호를 조합하여 1set를 만듦 
 i = 0
 n = random.choice(range(2,4))            # 전회에서 뽑힌 번호 중 몇개를 섞을 것인지 random (2,3)으로 결정 
+print('전회 번호와 중북번호 사용 수:', n)
 games_list = []
 while i < GAMES:
     a_game = random.sample(list(nums_sel), n) + random.sample(list(non_nums_sel), 6 - n)
