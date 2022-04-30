@@ -1,0 +1,30 @@
+# <Local> 
+파일은 수정하여 저장한다. 
+git add . 
+git commit -m 'commit message'
+
+# …or create a new repository on the command line
+echo "# a_branch" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/TheoKim365/a_branch.git
+git push -u origin main 
+
+# …or push an existing repository from the command line 
+git remote add origin https://github.com/TheoKim365/a_br.git
+git branch -M main
+git push -u origin main 
+
+# pull 
+git pull origin main
+
+# remove branch 
+git remote remove origin-h 
+
+# Delete an unneeded branch
+git clone git://git.kernel.org/.../git.git my.git
+cd my.git
+git branch -d -r origin/todo origin/html origin/man   (1)
+git branch -D test
