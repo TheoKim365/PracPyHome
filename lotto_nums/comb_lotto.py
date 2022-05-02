@@ -5,13 +5,20 @@ import xlwings as xw
 import random
 from pathlib import Path
 import sys
-# import onehot as oh
+
+
+# a = list(range(1,46))
+# a = range(1,46)
+# b = [4,5,6]
+# c = list(set(a) - set(b))
+# print(c)
+# sys.exit('일시정지')
 
 
 ## <1> find Last order of Lotto645 
 LOTTO_NUMS_FILE = "Lotto645_won_1012.xlsx"
 latest = 5  # 최근 * 당첨번호만 수집 
-GAMES = 50000  # 게임 수
+GAMES = 20  # 게임 수
 
 # 최종 회차의 숫자부 알아내기 
 fn_f = "Lotto645_won_"
@@ -91,13 +98,8 @@ if len(combi_list) == 0:
         i += 1    
 
 
-## <6> combi_dict의 key로 이루어진 combi_set을 만들고 
-#      lotto_dict의 key로 만들어진 lotto_set와 차를 구한다 
-combi_set = set(combi_dict.keys())
-lotto_set = set(lotto_dict.keys())
-nonsel_set = combi_set.difference(lotto_set)
-print(len(combi_set) - len(nonsel_set))  # 이미 선정된 Lotto 번호 경우의 수를 확인 
-# sys.exit("임시 종료")
+## <6> # 이미 선정된 Lotto 번호 경우의 수를 확인 
+print(len(set(combi_dict.keys()) - (set(combi_dict.keys()) - set(lotto_dict.keys()) )))
 # =====================================================================================
 
 
@@ -117,100 +119,36 @@ df2 = df2.astype(int)
 
 
 ## <2> 불러온 dataframe의 숫자 전체를 1차원 list data로 변환
-num45s_list = [ ]
+num45s_list = []
 n = start_order
 while n <= end_order:
     num45s_list.append(list(df1.loc[n, "n1":"nbo"]))
     n += 1
 
-
-## <3> for 문을 활용하여 모수 중에서
-# dictionary data의 key 값에 해당하는 data 수(n) 를 확인하고
-# key 값에 해당하는 data (n)에 +을 한다 
-num45s_dict = {}
-for k in range(1,46):       # 1~45번호에 대한 count를 초기화 
-    num45s_dict[k] = 0   
-
-for row in num45s_list:     # 1~45공이 나온 회수를 count
+sel_num45s = []
+for row in num45s_list:
     for element in row:
-        counter = num45s_dict[element]
-        num45s_dict[element] = counter + 1
+        sel_num45s.append(element)
 
-# print(num45s_dict)
-for key, happened in num45s_dict.items():
-    if happened != 0:
-        print(key, end=",")
-print("\n")
-
-## <5> dictionary data를 작성한 후 weight factor를 고려한 list data 만들기 
-num45wgt_list = [ ]
-for num, picks_count in num45s_dict.items():
-    k = 0
-    if picks_count >= 1:
-        m = 10
-    else:
-        m = 1
-
-    while k < m:
-        num45wgt_list.append(num)
-        k += 1
+sel_num45s = list(set(sel_num45s))
+non_sel_num45s = list(set(range(1,46)) - set(sel_num45s))
 
 
-## <6>
-''' list data에서 6개를 뽑고, 이미 뽑은 수와 중복되면 버리고 다시 뽑음 
-set data와 difference method 적용 
-set를 count하여 6개의 각기 다른 수가 될 때까지 sampling 함 
-'''
+print('selected numbers :' + str(sel_num45s))
+print('non selected numbers :' + str(non_sel_num45s))
+# sys.exit('일시정지')
+
 i = 0
-games_list = []
-while i < GAMES:
-    ballbox_list = num45wgt_list  # 원본은 유지하고 사본 list를 만듦. 
-    agame_list = []
-    while True:
-        random.shuffle(ballbox_list)  # 미리 한번 섞어주고, choices에서 다시 섞어줌
-        tmp_list = random.choices(ballbox_list, k=1)  # list의 다수의 요소를 가져옴, 원본 변경
-        agame_list = agame_list + tmp_list
-        agame_set = set(agame_list)
-      
-        if len(agame_set) == 6:
-            agame_list = list(agame_set)
-            agame_list.sort()
-            break
-   
-    games_list.append(agame_list)
+games_list =[]
+while i < GAMES: 
+    a_game = random.sample(sel_num45s, 3) + random.sample(non_sel_num45s,3)
+    a_game.sort()
+    games_list.append(a_game)
     i += 1
 
-games_list.sort() 
+games_list.sort()
 
-## 중복 회수와 같이 중복되는 번호 set를 뽑아냄. 
-# '''
-games_dict = {}
-# a_list = []
-
-for n, agame in enumerate(games_list):
-    if n == 0:
-        a_list = agame
-        games_dict[str(a_list)] = 1   # list data는 dictionary data의 key가 될 수 없다. 
-        
-    else:
-        if a_list == agame:
-            m = games_dict[str(a_list)]
-            games_dict[str(a_list)] = m + 1
-        else:
-            a_list = agame  
-            games_dict[str(a_list)] = 1
-    # n += 1
-
-# for numbers, num in games_dict.items():
-#     if num >= 3:
-#         print(numbers, num)
-        
-
-# sys.exit()
-# # '''
-
-# games_df = pd.DataFrame( games_list)
-games_df = pd.DataFrame(games_dict.items())
+games_df = pd.DataFrame( games_list)
 next_order = end_order + 1
 games_df.to_excel((f"{this_dir}\For_Lotto645_{next_order}.xlsx"))
 

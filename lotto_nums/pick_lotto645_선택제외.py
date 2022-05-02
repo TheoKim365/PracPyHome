@@ -6,8 +6,8 @@ import random
 import sys
 
 
-LOTTO_NUMS_FILE = "Lotto645_won_994.xlsx"
-GAMES = 20
+LOTTO_NUMS_FILE = "Lotto645_won_1010.xlsx"
+GAMES = 100
 
 
 ## <2> indexing each lotton645 number
@@ -82,6 +82,9 @@ combisub_list = random.choices(nonsel_list, k=GAMES)  # GAMES : 뽑고자 하는
 for i, case_num in enumerate(combisub_list):
     if (i % 5) == 0:
         print('------------------------------------')
-    print(f"{case_num} : {combi_dict[case_num]}")
+    print(f"{case_num} : {combi_dict[case_num]}") 
+
+
+
 
 sys.exit("Lucky numbers have been generated !!!")
